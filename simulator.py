@@ -35,25 +35,22 @@ def main():
         is_z0 = not (peer_id in z0_peers_set)  # interpret 0 as slow and 1 as fast
         is_z1 = not (peer_id in z1_peers_set)  # interpret 0 as low and 1 as high
         hashing_power = 10 * h if is_z1 else h
-        all_peers.append(peer(peer_id, args.total_peers, is_z0, is_z1, args.initial_balance, hashing_power))
+        all_peers.append(peer(peer_id, args.total_peers, is_z0, is_z1, args.initial_balance, hashing_power, args.Tb))
 
     all_event_list = [] # This is a priority queue which keeps the events sorted based on time
 
     counter = 0
     for peer_obj in all_peers:
-        heapq.heappush(all_event_list, peer_obj.generate_transaction_event(args.total_peers * args.Tx,
-                                                                            args.total_peers, args.initial_balance, args.To))
+        for event in peer_obj.generate_transaction_event_list(args.total_peers * args.Tx,
+                                                                            args.total_peers, args.initial_balance, args.To):
+            heapq.heappush(all_event_list, event)
         heapq.heappush(all_event_list, peer_obj.generate_mine_block_event(0))
     
-    csv_file_path = "output_events.csv"
-    with open(csv_file_path, mode='w', newline='') as file:
-        writer = csv.writer(file)
-        for element in heapq.merge(*all_event_list, key=lambda x: x[1]):
-            writer.writerow(element)
-
     connect_graph(all_peers)
+
     for peer_obj in all_peers:
         peer_obj.display_properties()
+    
     handle_events_queue(all_event_list, all_peers)
 
 if __name__ == "__main__":
