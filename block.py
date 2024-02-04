@@ -1,3 +1,5 @@
+from peer_utils import find_longest_chain
+
 class block:
     def __init__(self, block_id, prev_block_id, miner_id, creation_time):
         self.id = block_id
@@ -7,17 +9,18 @@ class block:
         self.children = []  # List of child blocks
         self.transactions = []  # List to store transactions
 
-    def fill_block_with_transactions(self, transaction_pool, genesis_block_root):
+    def fill_block_with_transactions(self, miner_peer):
         # Get the transaction IDs in the longest chain
-        longest_chain_transaction_ids = find_longest_chain(genesis_block_root)
+        longest_chain = find_longest_chain(miner_peer.genesis_block_root)
+        longest_chain_transaction_ids = []
         for block in longest_chain:
-            longest_chain_transaction_ids.update(transaction[2] for transaction in block.transactions)
+            longest_chain_transaction_ids.append(transaction[2] for transaction in block.transactions)
 
         # Verify and add transactions to the block
         transactions_to_add = []
         transactions_to_remove = set()
 
-        for transaction in transaction_pool:
+        for transaction in miner_peer.transaction_pool:
             transaction_id = transaction[2]
 
             if transaction_id not in longest_chain_transaction_ids:
@@ -33,4 +36,4 @@ class block:
             self.add_transaction(transaction)
 
         # Remove transactions from the transaction pool
-        transaction_pool[:] = [txn for txn in transaction_pool if txn[2] not in transactions_to_remove]
+        miner_peer.transaction_pool[:] = [txn for txn in miner_peer.transaction_pool if txn[2] not in transactions_to_remove]
