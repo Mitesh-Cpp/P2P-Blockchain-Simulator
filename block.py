@@ -7,9 +7,9 @@ class block:
         self.children = []  # List of child blocks
         self.transactions = []  # List to store transactions
 
-    def fill_block_with_transactions(self, transaction_pool, genesis_block):
+    def fill_block_with_transactions(self, transaction_pool, genesis_block_root):
         # Get the transaction IDs in the longest chain
-        longest_chain_transaction_ids = find_longest_chain(genesis_block)
+        longest_chain_transaction_ids = find_longest_chain(genesis_block_root)
         for block in longest_chain:
             longest_chain_transaction_ids.update(transaction[2] for transaction in block.transactions)
 
