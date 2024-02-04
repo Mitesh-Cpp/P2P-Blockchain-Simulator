@@ -35,10 +35,16 @@ class peer:
             interarrival_time = np.random.exponential(scale=Tx)
             current_time += interarrival_time
             if current_time < To:
-                transaction_event_list.append(["transaction_event", int(current_time), transaction_id, self.id, recipient_id, coins])
+                transaction_event_list.append(["generate_transaction_event", int(current_time), transaction_id, self.id, recipient_id, coins])
             else:
                 break
         return transaction_event_list
+
+    def generate_mine_block_event(self, time):
+        current_time = time
+        mine_block_event = []
+        mine_block_event.append(["mine_block_event", int(current_time), self.id])
+        return mine_block_event
 
     def calculate_latency(self, recipient_id, message_length):
         # returns latency in milliseconds, takes message_length in bits
