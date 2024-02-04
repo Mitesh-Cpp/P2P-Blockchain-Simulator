@@ -1,0 +1,1 @@
+find_longest_chain(genesis_block)
