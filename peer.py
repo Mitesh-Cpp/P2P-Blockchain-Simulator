@@ -4,7 +4,7 @@ import numpy as np
 from block import block
 
 class peer:
-    def __init__(self, peer_id, total_peers, speed, cpu, initial_balance, hashing_power):
+    def __init__(self, peer_id, total_peers, speed, cpu, initial_balance, hashing_power, Tb):
         self.id = peer_id
         self.all_peers_balance = {peer: initial_balance for peer in range(1, total_peers + 1)}
         self.speed = speed  # 0 -> slow, 1 -> fast
@@ -13,6 +13,7 @@ class peer:
         self.connected_nodes = []
         self.transaction_pool = []
         self.genesis_block_root = block(str(uuid.uuid4()), None, self.id, 0)
+        self.Tb = Tb
 
     def display_properties(self):
         print("-----------")
@@ -24,7 +25,12 @@ class peer:
         print("Connected Nodes:", self.connected_nodes)
         print("-----------")
 
-    def generate_transaction_event(self, Tx, total_peers, initial_balance, To):
+    def generate_block_propagate_event(self, block, block_generation_time, receiver_peer_idx):
+        return [block_generation_time, "block_propagate_event", block, receiver_peer_idx]
+        # print(type(block_propagate_event))
+        return block_propagate_event
+
+    def generate_transaction_event_list(self, Tx, total_peers, initial_balance, To):
         transaction_event_list = []  # [["transaction_event", time, TxnId, IDx, IDy, C], [], [], ...]
         current_time = 0
         while current_time < To:
@@ -35,15 +41,14 @@ class peer:
             interarrival_time = np.random.exponential(scale=Tx)
             current_time += interarrival_time
             if current_time < To:
-                transaction_event_list.append(["generate_transaction_event", int(current_time), transaction_id, self.id, recipient_id, coins])
+                transaction_event_list.append([int(current_time), "generate_transaction_event", transaction_id, self.id, recipient_id, coins])
             else:
                 break
         return transaction_event_list
 
     def generate_mine_block_event(self, time):
         current_time = time
-        mine_block_event = []
-        mine_block_event.append(["mine_block_event", int(current_time), self.id])
+        mine_block_event = [int(current_time), "mine_block_event", self.id, self.Tb]
         return mine_block_event
 
     def calculate_latency(self, recipient_id, message_length):
@@ -53,4 +58,3 @@ class peer:
         queuing_delay = np.random.exponential(scale=96000000/link_speed)
         latency = propagation_delay + message_length / link_speed + queuing_delay
         return latency
-
