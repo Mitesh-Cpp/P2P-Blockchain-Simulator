@@ -4,15 +4,15 @@ import numpy as np
 from block import block
 
 class peer:
-    def __init__(self, peer_id, total_peers, speed, cpu, initial_balance, hashing_power, Tb):
+    def __init__(self, peer_id, total_peers, speed, cpu, initial_balance, hashing_power, Tb, genesis_block):
         self.id = peer_id
-        self.all_peers_balance = {peer: initial_balance for peer in range(1, total_peers + 1)}
+        self.all_peers_balance = {peer: initial_balance for peer in range(0, total_peers)}
         self.speed = speed  # 0 -> slow, 1 -> fast
         self.cpu = cpu  # 0 -> low, 1 -> high
         self.hashing_power = hashing_power
         self.connected_nodes = []
         self.transaction_pool = []
-        self.genesis_block_root = block(str(uuid.uuid4()), None, self.id, 0)
+        self.genesis_block = genesis_block
         self.Tb = Tb
 
     def display_properties(self):
@@ -26,9 +26,9 @@ class peer:
         print("-----------")
 
     def generate_block_propagate_event(self, block, block_generation_time, receiver_peer_idx):
-        return [block_generation_time, "block_propagate_event", block, receiver_peer_idx]
+        return [int(block_generation_time), "block_propagate_event", block, receiver_peer_idx]
         # print(type(block_propagate_event))
-        return block_propagate_event
+        # return block_propagate_event
 
     def generate_transaction_event_list(self, Tx, total_peers, initial_balance, To):
         transaction_event_list = []  # [["transaction_event", time, TxnId, IDx, IDy, C], [], [], ...]
@@ -50,11 +50,3 @@ class peer:
         current_time = time
         mine_block_event = [int(current_time), "mine_block_event", self.id, self.Tb]
         return mine_block_event
-
-    def calculate_latency(self, recipient_id, message_length):
-        # returns latency in milliseconds, takes message_length in bits
-        link_speed = 100000 if self.speed and recipient_id.speed else 5000
-        propagation_delay = random.uniform(10, 500)  # Random value between 10ms and 500ms
-        queuing_delay = np.random.exponential(scale=96000000/link_speed)
-        latency = propagation_delay + message_length / link_speed + queuing_delay
-        return latency
