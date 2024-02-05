@@ -9,9 +9,13 @@ class block:
         self.children = []  # List of child blocks
         self.transactions = []  # List to store transactions
 
+    def __lt__(self, other):
+        # Define the less-than comparison
+        return self.creation_time < other.creation_time
+
     def fill_block_with_transactions(self, miner_peer):
         # Get the transaction IDs in the longest chain
-        longest_chain = find_longest_chain(miner_peer.genesis_block_root)
+        longest_chain = find_longest_chain(miner_peer.genesis_block)
         longest_chain_transaction_ids = []
         for block in longest_chain:
             longest_chain_transaction_ids.append(transaction[2] for transaction in block.transactions)
