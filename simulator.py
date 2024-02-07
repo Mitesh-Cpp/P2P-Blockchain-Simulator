@@ -7,6 +7,7 @@ from block import block
 import uuid
 from connect_graph import connect_graph
 from handle_events_queue import handle_events_queue
+from peer_utils import traverse
 
 def generate_peer_set(total_peers, z0_percent, z1_percent):
     peers_set = [i for i in range(0, total_peers)]
@@ -33,11 +34,13 @@ def main():
     all_peers = [] 
 
     h = 1/(args.total_peers*(10 - 9*args.z1_percent/100))    # low CPU hashing power
+    print("Nigga2", h)
     genesis_block_root_id = str(uuid.uuid4()) # block(str(uuid.uuid4()), None, self.id, 0)
     for peer_id in peers_set:
         is_z0 = not (peer_id in z0_peers_set)  # interpret 0 as slow and 1 as fast
         is_z1 = not (peer_id in z1_peers_set)  # interpret 0 as low and 1 as high
         hashing_power = 10 * h if is_z1 else h
+        print("Nigro ",hashing_power)
         genesis_block = block(genesis_block_root_id, None, None, 0)
         all_peers.append(peer(peer_id, args.total_peers, is_z0, is_z1, args.initial_balance, hashing_power, args.Tb, genesis_block))
 
@@ -56,6 +59,19 @@ def main():
         peer_obj.display_properties()
     
     handle_events_queue(all_event_list, all_peers)
+
+
+    # all_peers[0].genesis_block.children = []
+    # id1 = str(uuid.uuid4())
+    # all_peers[0].genesis_block.children.append(block(id1, genesis_block_root_id, 0, 5224))
+    # id_to_search = str(uuid.uuid4())
+    # id2 = str(uuid.uuid4())
+    # all_peers[0].genesis_block.children[0].children.append(block(id2, genesis_block_root_id, 0, 5254234))
+    # all_peers[0].genesis_block.children[0].children.append(block(id_to_search, genesis_block_root_id, 0, 5254234))
+
+    # traverse(all_peers[0], id_to_search)
+
+    # print(genesis_block_root_id, id1, id_to_search, id2)
 
 if __name__ == "__main__":
     main()
