@@ -44,6 +44,7 @@ class peer:
                 transaction_event_list.append([int(current_time), "generate_transaction_event", transaction_id, self.id, recipient_id, coins])
             else:
                 break
+        # print(transaction_event_list)
         return transaction_event_list
 
     def generate_mine_block_event(self, time):
