@@ -9,6 +9,8 @@ from peer_utils import find_longest_chain, block_present, verify_all_transaction
 def handle_events_queue(all_event_list, all_peers):
 
     block_generation_time_tracking = []
+    low_cpu_avg_tracking = [0]
+    high_cpu_avg_tracking = [0]
     def average_difference(lst):
     # Check if the list has at least two elements
         if len(lst) < 2:
@@ -51,7 +53,13 @@ def handle_events_queue(all_event_list, all_peers):
         prev_block_id = longest_chain[-1].id if longest_chain else None
         # print("prev_block_id")
         # print(prev_block_id)
-        block_generation_time = current_time + np.random.exponential(scale=Tb/all_peers[creator_idx].hashing_power)
+        random_time = int(np.random.exponential(scale=(1.0*Tb)/all_peers[creator_idx].hashing_power))
+        print("idhar hoon mai: ", (1.0*Tb)/all_peers[creator_idx].hashing_power, " yo nigga ", all_peers[creator_idx].hashing_power)
+        block_generation_time = current_time + random_time
+        if(all_peers[creator_idx].cpu):
+            high_cpu_avg_tracking.append(random_time)
+        else:
+            low_cpu_avg_tracking.append(random_time)
         new_block = block(str(uuid.uuid4()), prev_block_id, all_peers[creator_idx].id, int(block_generation_time))
         # print("Nigga generated a block at: ", int(block_generation_time))
         block_generation_time_tracking.append(int(block_generation_time))
@@ -89,5 +97,12 @@ def handle_events_queue(all_event_list, all_peers):
         # Add more conditions for other event types if needed
     block_generation_time_tracking = sorted(block_generation_time_tracking)
     print(average_difference(block_generation_time_tracking))
+    high_cpu_avg_tracking = sorted(high_cpu_avg_tracking)
+    print(int(average_difference(high_cpu_avg_tracking)))
+    print(high_cpu_avg_tracking)
+    low_cpu_avg_tracking = sorted(low_cpu_avg_tracking)
+    print(int(average_difference(low_cpu_avg_tracking)))
+
+
 
     
