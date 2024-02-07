@@ -48,8 +48,41 @@ def find_block_by_id(current_block, block_id):
 
     return None
 
+def traverse(current_peer, block_id_to_verify):
+    final_path = []
+    def dfs(node, current_path):
+        if not node:
+            return
+
+        current_path.append(node)
+        if node.id == block_id_to_verify:
+            final_path.extend(current_path)
+            return
+
+        for child in node.children:
+            dfs(child, current_path)
+            current_path.pop()
+
+    
+    dfs(current_peer.genesis_block, [])
+    # print("Het")
+    # print([x.id for x in final_path])
+    return final_path
+
+
 def verify_all_transactions(peer, block_to_verify):
     # Verify all transactions in the block, checking if the sender has enough balance
+    final_path = traverse(peer, block_to_verify.prev_block_id)
+    for blk in final_path:
+        for txn in blk.transactions:
+            s_id = txn[3]
+            r_id = txn[4]
+            Amount = txn[5]
+
+            peer.all_peers_balance[s_id] -= Amount
+            peer.all_peers_balance[r_id] += Amount
+    
+    print("Het Patel :", peer.all_peers_balance)
     for transaction in block_to_verify.transactions:
         sender_id = transaction[3]
         recipient_id = transaction[4]
