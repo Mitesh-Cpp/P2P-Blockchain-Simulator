@@ -21,26 +21,16 @@ class block:
     def fill_block_with_transactions(self, miner_peer,all_peers, mining_start_time):
         # Get the transaction IDs in the longest chain
         longest_chain = find_longest_chain(miner_peer.genesis_block)
-        print("Current block: ", self.id, "Prev id: ", self.prev_block_id)
-        print("Longest Chain size: ", len(longest_chain))
-        print("Miner ID", miner_peer.id)
+        # print("Current block: ", self.id, "Prev id: ", self.prev_block_id)
+        # print("Longest Chain size: ", len(longest_chain))
+        # print("Miner ID", miner_peer.id)
         longest_chain_transaction_ids = []
         for block in longest_chain:
-            # print("Block: ", block)
-            # print(block.transactions)
-            # if block:
-            # print(block.id, end=" ")
-            # else:
-            #     print("BLOCK NONE")
-            # res=[]
             for txn in block.transactions:
-                # res.append(txn[2])
                 longest_chain_transaction_ids.append(txn[2])
-            # print("TXNS ::",res)
-        print()
                 
         # print(longest_chain_transaction_ids)
-        print("Txns in longest chain length: ", len(longest_chain_transaction_ids))
+        # print("Txns in longest chain length: ", len(longest_chain_transaction_ids))
         
         # Verify and add transactions to the block
         transactions_to_add = []
@@ -52,9 +42,10 @@ class block:
         transactions_to_add.append([mining_start_time, "transaction_propogate_event", str(uuid.uuid4()), "COINBASE", miner_peer.id, 50, miner_peer.id, miner_peer.id])
         exec_balance[miner_peer.id] += 50
 
-        print("Miner Txn Pool size: ", len(miner_peer.transaction_pool))
-        for transaction in miner_peer.transaction_pool:
-            transaction_id = transaction[2]
+        # print("Miner Txn Pool size: ", len(miner_peer.transaction_pool))
+        for transaction_id in miner_peer.transaction_pool:
+            transaction = miner_peer.transaction_dict[transaction_id]
+
             sender_id = transaction[3]
             rec_id = transaction[4]
             coins = transaction[5]
@@ -74,7 +65,7 @@ class block:
             self.transactions.append(transaction)
             # self.add_transaction(transaction)
 
-        print("Txns inside block: ", len(self.transactions))
+        # print("Txns inside block: ", len(self.transactions))
         
         # Remove transactions from the transaction pool
         # miner_peer.transaction_pool[:] = [txn for txn in miner_peer.transaction_pool if txn[2] not in transactions_to_remove]

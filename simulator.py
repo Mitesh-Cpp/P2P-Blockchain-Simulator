@@ -21,7 +21,7 @@ def generate_peer_set(total_peers, z0_percent, z1_percent):
 
 def main():
     parser = argparse.ArgumentParser(description='P2P cryptocurrency network Simulator')
-    parser.add_argument('--total_peers', type=int, default=5, help='Total number of peers')
+    parser.add_argument('--total_peers', type=int, default=10, help='Total number of peers')
     parser.add_argument('--initial_balance', type=int, default=100, help='Initial balance for peers')
     parser.add_argument('--z0_percent', type=float, default=50.0, help='z0 percent (slow peers percent)')
     parser.add_argument('--z1_percent', type=float, default=50.0, help='z1 percent (low cpu peers percent)')
@@ -79,24 +79,24 @@ def main():
     # curr_node = all_peers[0].genesis_block
     
     # dict = {}
-    def bfs(start_node, count):
-        visited, queue = [], [start_node]
-        while queue:
-            current_node = queue.pop(0)
-            count += 1
-            adjecency_list.append([[current_node.id],[child.id for child in current_node.children]])
-            if current_node not in visited:
-                visited.append(current_node)
-                queue.extend(current_node.children)  # Add unvisited neighbors to the queue
-        return count
-    i = 0
-    for x in all_peers:
-        adjecency_list = []
-        count = 0
-        x = bfs(x.genesis_block, count)
-        i = i+1
-        print(adjecency_list)
-        print("Total blocks: ", x)
+    # def bfs(start_node, count):
+    #     visited, queue = [], [start_node]
+    #     while queue:
+    #         current_node = queue.pop(0)
+    #         count += 1
+    #         adjecency_list.append([[current_node.id],[child.id for child in current_node.children]])
+    #         if current_node not in visited:
+    #             visited.append(current_node)
+    #             queue.extend(current_node.children)  # Add unvisited neighbors to the queue
+    #     return count
+    # i = 0
+    # for x in all_peers:
+    #     adjecency_list = []
+    #     count = 0
+    #     y = bfs(x.genesis_block, count)
+    #     i = i+1
+    #     # print(adjecency_list)
+    #     print("Total blocks: ", y)
     # dict = {}
     # l = 0
     # for i in range(len(adjecency_list)):  # Iterate over indices, not list elements
@@ -121,9 +121,9 @@ def main():
     # visualize_graph(ad)
 
 
-    final_longest_chain = find_longest_chain(all_peers[0].genesis_block)
-    print(final_longest_chain)
-    print(execute_transactions(all_peers, final_longest_chain))
+    # final_longest_chain = find_longest_chain(all_peers[0].genesis_block)
+    # print(final_longest_chain)
+    # print(execute_transactions(all_peers, final_longest_chain))
     for x in all_peers:
         print(len(x.transaction_pool))
 if __name__ == "__main__":

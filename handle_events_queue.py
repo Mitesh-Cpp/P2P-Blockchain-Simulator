@@ -68,8 +68,9 @@ def handle_events_queue(all_event_list, all_peers, args):
         txn_sender_id = current_event[3]
         txn_receiver_id = current_event[4]
         coins = current_event[5]
+        sender_id = current_event[6]
 
-        if tuple(current_event) in current_peer.transaction_pool:
+        if txn_id in current_peer.transaction_pool:
             # print("Rejected Txn Prop! Already in Txn Pool")
             return
         # for transaction in current_peer.transaction_pool:
@@ -80,7 +81,8 @@ def handle_events_queue(all_event_list, all_peers, args):
         #         return
         # print("Passed----------------------------------------")
         # current_peer.transaction_pool.append(current_event)
-        current_peer.transaction_pool.add(tuple(current_event))
+        current_peer.transaction_pool.add(txn_id)
+        current_peer.transaction_dict[txn_id] = current_event
         # print(len(current_peer.transaction_pool))
         # print("NIGGER::",len(current_peer.transaction_pool))
         
@@ -134,7 +136,7 @@ def handle_events_queue(all_event_list, all_peers, args):
     # xxx=0
     while all_event_list:
         current_event = heapq.heappop(all_event_list)
-        print(current_event)
+        # print(current_event)
         event_type = current_event[1]
         # print(xxx)
         # xxx+=1

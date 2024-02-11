@@ -13,6 +13,7 @@ class peer:
         self.hashing_power = hashing_power
         self.connected_nodes = []
         self.transaction_pool = set()
+        self.transaction_dict = {}
         self.genesis_block = genesis_block
         # self.blockchain = dict()
         self.Tb = Tb

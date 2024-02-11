@@ -136,7 +136,7 @@ def verify_all_transactions(all_peers, peer, block_to_verify):
             
             updated_balance[sender_id] -= amount
             updated_balance[recipient_id] += amount
-    print("Het Patel :", updated_balance)
+    # print("Het Patel :", updated_balance)
     return True
 
 def add_block_to_tree(peer, new_block):
