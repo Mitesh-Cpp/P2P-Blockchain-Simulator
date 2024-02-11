@@ -2,6 +2,7 @@ import random
 import uuid
 import numpy as np
 from block import block
+import copy
 
 class peer:
     def __init__(self, peer_id, total_peers, speed, cpu, initial_balance, hashing_power, Tb, genesis_block):
@@ -11,9 +12,16 @@ class peer:
         self.cpu = cpu  # 0 -> low, 1 -> high
         self.hashing_power = hashing_power
         self.connected_nodes = []
-        self.transaction_pool = []
+        self.transaction_pool = set()
         self.genesis_block = genesis_block
+        # self.blockchain = dict()
         self.Tb = Tb
+        self.latest_mine_block_event_time = 0
+        self.previous_longest_chain_length = 1
+        # self.lastBlockID = genesis_block.id
+
+        # self.blockchain[genesis_block.id] = genesis_block
+
 
     def display_properties(self):
         print("-----------")
@@ -25,17 +33,17 @@ class peer:
         print("Connected Nodes:", self.connected_nodes)
         print("-----------")
 
-    def generate_block_propagate_event(self, block, block_generation_time, receiver_peer_idx):
-        return [int(block_generation_time), "block_propagate_event", block, receiver_peer_idx]
+    def generate_block_propagate_event(self, block, block_generation_time, receiver_peer_idx, mining_start_time):
+        return [int(block_generation_time), "block_propagate_event", copy.deepcopy(block), receiver_peer_idx, block.id, mining_start_time]
         # print(type(block_propagate_event))
         # return block_propagate_event
 
     def generate_transaction_event_list(self, Tx, total_peers, initial_balance, To):
         transaction_event_list = []  # [["transaction_event", time, TxnId, IDx, IDy, C], [], [], ...]
         current_time = 0
-        while current_time < To:
+        while current_time < To / 2:
             transaction_id = str(uuid.uuid4())
-            recipient_id = random.randint(1, total_peers) 
+            recipient_id = random.randint(0, total_peers-1) 
             coins = random.randint(1, initial_balance)
             # Generate exponential distribution for interarrival times
             interarrival_time = np.random.exponential(scale=Tx)

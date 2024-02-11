@@ -17,6 +17,25 @@ def find_longest_chain(root):
         return longest_path
 
     return dfs(root, [])
+# def find_longest_chain(root):
+#     queue = [(root, [])]
+#     longest_path = []
+
+#     while queue:
+#         node, path = queue.pop(0)
+
+#         # Append current node to the path
+#         path.append(node)
+
+#         # Check if this path is longer than the current longest
+#         if len(path) > len(longest_path):
+#             longest_path = path.copy()
+
+#         # Explore child nodes
+#         for child in node.children:
+#             queue.append((child, path.copy()))
+
+#     return longest_path
 
 
 def calculate_latency(all_peers, sender_idx, recipient_idx, message_length):
@@ -25,8 +44,8 @@ def calculate_latency(all_peers, sender_idx, recipient_idx, message_length):
     propagation_delay = random.uniform(10, 500)  # Random value between 10ms and 500ms
     queuing_delay = np.random.exponential(scale=96000/link_speed)
     latency = propagation_delay + message_length / link_speed + queuing_delay
-    print("latency is: ")
-    print(latency)
+    # print("latency is: ")
+    # print(latency)
     return int(latency)
 
 def block_present(peer, block_to_check):
@@ -47,6 +66,19 @@ def find_block_by_id(current_block, block_id):
             return found_block
 
     return None
+
+# def find_block_by_id(current_block, block_id):
+#     queue = [current_block]
+
+#     while queue:
+#         block = queue.pop(0)
+
+#     if block.id == block_id:
+#         return block
+
+#     queue.extend(block.children)  # Add child blocks to the queue for exploration
+
+#     return None
 
 def traverse(current_peer, block_id_to_verify):
     final_path = []
@@ -69,29 +101,42 @@ def traverse(current_peer, block_id_to_verify):
     # print([x.id for x in final_path])
     return final_path
 
-
-def verify_all_transactions(peer, block_to_verify):
-    # Verify all transactions in the block, checking if the sender has enough balance
-    final_path = traverse(peer, block_to_verify.prev_block_id)
-    for blk in final_path:
+def execute_transactions(all_peers,path):
+    initial_balance = [100] * len(all_peers)
+    for blk in path:
         for txn in blk.transactions:
             s_id = txn[3]
             r_id = txn[4]
             Amount = txn[5]
 
-            peer.all_peers_balance[s_id] -= Amount
-            peer.all_peers_balance[r_id] += Amount
+            if s_id != "COINBASE":
+                initial_balance[s_id] -= Amount
+            initial_balance[r_id] += Amount
+    return initial_balance
+
+def verify_all_transactions(all_peers, peer, block_to_verify):
+    # Verify all transactions in the block, checking if the sender has enough balance
+    final_path = []
+    if block_to_verify.prev_block_id != None:
+        final_path = traverse(peer, block_to_verify.prev_block_id)
+    updated_balance = execute_transactions(all_peers, final_path)
     
-    print("Het Patel :", peer.all_peers_balance)
     for transaction in block_to_verify.transactions:
         sender_id = transaction[3]
         recipient_id = transaction[4]
         amount = transaction[5]
 
-        # Check if the sender has enough balance for the transaction
-        if peer.all_peers_balance[sender_id] < amount:
-            return False
-
+        if sender_id == "COINBASE":
+            updated_balance[recipient_id] += amount
+        else:    
+            # Check if the sender has enough balance for the transaction
+            if updated_balance[sender_id] < amount:
+                print("rejected", block_to_verify)
+                return False
+            
+            updated_balance[sender_id] -= amount
+            updated_balance[recipient_id] += amount
+    print("Het Patel :", updated_balance)
     return True
 
 def add_block_to_tree(peer, new_block):
