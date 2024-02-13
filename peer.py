@@ -32,6 +32,7 @@ class peer:
         print("CPU:", "high" if self.cpu else "low")
         print("Hashing Power:", self.hashing_power)
         print("Connected Nodes:", self.connected_nodes)
+        print("Genesis Block Address:", self.genesis_block)
         print("-----------")
 
     def generate_block_propagate_event(self, block, block_generation_time, receiver_peer_idx, mining_start_time):

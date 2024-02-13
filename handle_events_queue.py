@@ -6,8 +6,10 @@ import uuid
 from peer_utils import find_longest_chain, block_present, verify_all_transactions, add_block_to_tree, perform_transactions, calculate_latency
 # from simulator import args
 
-def handle_events_queue(all_event_list, all_peers, args):
 
+def handle_events_queue(all_event_list, all_peers, args):
+    # nonlocal rohit_nigga
+    rohit_nigga = 0
     block_generation_time_tracking = []
     low_cpu_avg_tracking = [0]
     high_cpu_avg_tracking = [0]
@@ -101,6 +103,8 @@ def handle_events_queue(all_event_list, all_peers, args):
         return
         # Implement handling of transaction event
     def handle_mine_block_event(all_peers, current_event):
+        # nonlocal rohit_nigga
+        # rohit_nigga += 1
         creator_idx = current_event[2]  # Assuming event_data contains the creator's index
         current_time = current_event[0]
         Tb = current_event[3]
@@ -142,6 +146,7 @@ def handle_events_queue(all_event_list, all_peers, args):
         # xxx+=1
         # print("len is ",len(all_event_list))
         # Perform operations based on the event type
+        print(current_event[0], flush = True)
         if event_type == "generate_transaction_event":
             handle_generate_transaction_event(all_peers, current_event)
         elif event_type == "mine_block_event":
@@ -158,6 +163,7 @@ def handle_events_queue(all_event_list, all_peers, args):
     # print(high_cpu_avg_tracking)
     # low_cpu_avg_tracking = sorted(low_cpu_avg_tracking)
     # print(int(average_difference(low_cpu_avg_tracking)))
+    # print("# time mine event called: ", rohit_nigga)
 
 
 

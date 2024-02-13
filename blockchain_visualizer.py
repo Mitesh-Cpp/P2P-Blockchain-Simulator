@@ -28,11 +28,3 @@ def visualize_graph(adjacency_list):
   plt.title("Graph Visualization")
   plt.axis('off')  # Remove axes ticks and labels
   plt.show()
-
-adjacency_list = [
-  [1, 2],
-  [0, 3],
-  [0, 4],
-  [1],
-  [2],
-]

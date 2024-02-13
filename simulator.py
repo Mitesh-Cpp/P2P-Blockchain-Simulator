@@ -11,6 +11,7 @@ from peer_utils import traverse
 from blockchain_visualizer import visualize_graph
 from peer_utils import find_longest_chain, execute_transactions
 import copy
+from visualize_tree import visualize_tree
 
 # copy.deepcopy(object)
 def generate_peer_set(total_peers, z0_percent, z1_percent):
@@ -21,16 +22,16 @@ def generate_peer_set(total_peers, z0_percent, z1_percent):
 
 def main():
     parser = argparse.ArgumentParser(description='P2P cryptocurrency network Simulator')
-    parser.add_argument('--total_peers', type=int, default=10, help='Total number of peers')
+    parser.add_argument('--total_peers', type=int, default=100, help='Total number of peers')
     parser.add_argument('--initial_balance', type=int, default=100, help='Initial balance for peers')
     parser.add_argument('--z0_percent', type=float, default=50.0, help='z0 percent (slow peers percent)')
     parser.add_argument('--z1_percent', type=float, default=50.0, help='z1 percent (low cpu peers percent)')
-    # mean time for interarrival of transactions (Tx) in seconds
-    parser.add_argument('--Tx', type=int, default=10000/2, help='Mean Time for Exponential distribution of interarrival transaction times') 
-    # mean time for interarrival of blocks (Tb) in seconds
+    # mean time for interarrival of transactions (Tx) in milliseconds
+    parser.add_argument('--Tx', type=int, default=1000, help='Mean Time for Exponential distribution of interarrival transaction times') 
+    # mean time for interarrival of blocks (Tb) in milliseconds
     parser.add_argument('--Tb', type=int, default=600000, help='Mean Time for Exponential distribution of interarrival block times') 
     # observation period / simulator running period
-    parser.add_argument('--To', type=int, default=100000000, help='Total observation/simulation period') 
+    parser.add_argument('--To', type=int, default=12000000, help='Total observation/simulation period') 
     
     args = parser.parse_args()
     peers_set, z0_peers_set, z1_peers_set = generate_peer_set(args.total_peers, args.z0_percent, args.z1_percent)
@@ -39,7 +40,7 @@ def main():
 
     h = 1/(args.total_peers*(10 - 9*args.z1_percent/100))    # low CPU hashing power
     genesis_block_root_id = str(uuid.uuid4()) # block(str(uuid.uuid4()), None, self.id, 0)
-    print("Genesis id: ", genesis_block_root_id)
+    print("Genesis id: ", genesis_block_root_id, flush = True)
     for peer_id in peers_set:
         is_z0 = not (peer_id in z0_peers_set)  # interpret 0 as slow and 1 as fast
         is_z1 = not (peer_id in z1_peers_set)  # interpret 0 as low and 1 as high
@@ -78,25 +79,25 @@ def main():
     
     # curr_node = all_peers[0].genesis_block
     
-    # dict = {}
-    # def bfs(start_node, count):
-    #     visited, queue = [], [start_node]
-    #     while queue:
-    #         current_node = queue.pop(0)
-    #         count += 1
-    #         adjecency_list.append([[current_node.id],[child.id for child in current_node.children]])
-    #         if current_node not in visited:
-    #             visited.append(current_node)
-    #             queue.extend(current_node.children)  # Add unvisited neighbors to the queue
-    #     return count
-    # i = 0
-    # for x in all_peers:
-    #     adjecency_list = []
-    #     count = 0
-    #     y = bfs(x.genesis_block, count)
-    #     i = i+1
-    #     # print(adjecency_list)
-    #     print("Total blocks: ", y)
+    dict = {}
+    def bfs(start_node, count):
+        visited, queue = [], [start_node]
+        while queue:
+            current_node = queue.pop(0)
+            count += 1
+            adjecency_list.append([child.id for child in current_node.children])
+            if current_node not in visited:
+                visited.append(current_node)
+                queue.extend(current_node.children)  # Add unvisited neighbors to the queue
+        return count
+    i = 0
+    for x in all_peers:
+        adjecency_list = []
+        count = 0
+        y = bfs(x.genesis_block, count)
+        i = i+1
+        print(adjecency_list, flush = True)
+        print("Total blocks: ", y, flush = True)
     # dict = {}
     # l = 0
     # for i in range(len(adjecency_list)):  # Iterate over indices, not list elements
@@ -121,10 +122,14 @@ def main():
     # visualize_graph(ad)
 
 
-    # final_longest_chain = find_longest_chain(all_peers[0].genesis_block)
-    # print(final_longest_chain)
-    # print(execute_transactions(all_peers, final_longest_chain))
+    final_longest_chain = find_longest_chain(all_peers[0].genesis_block)
+    print(len(final_longest_chain), flush = True)
+    print(execute_transactions(all_peers, final_longest_chain), flush = True)
     for x in all_peers:
-        print(len(x.transaction_pool))
+        print(len(x.transaction_pool), flush = True)
+
+    root_node = all_peers[0].genesis_block
+    visualize_tree(root_node)
+
 if __name__ == "__main__":
     main()
