@@ -1,5 +1,8 @@
 # P2P-Blockchain-Simulator
 
+![p2p_blockchain_simulator](https://github.com/user-attachments/assets/37bbfa68-7897-4e82-a7d0-a8de54124d5e)
+
+
 ## Visualization Results
 
 Visualizations for any **five randomly chosen peers** (with duplicates possible) are stored in the `Blockchain_of_each_peer` folder. Please **clear this folder using `rm ./Blockchain_of_each_peer/*`** before running a new simulation.
