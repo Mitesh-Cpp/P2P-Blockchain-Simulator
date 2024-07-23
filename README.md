@@ -8,7 +8,7 @@ Visualizations for any **five randomly chosen peers** (with duplicates possible)
 
 The blockchain trees of **Any five randomly chosen nodes/peers** are stored in the `BFS_of_blockchain` folder. Each tree is represented as a list of its **edges in parent-child format**. Please **clear this folder using `rm ./BFS_of_blockchain/*`** before running a new simulation.
 
-**Note:** Due to time constraints associated with I/O overhead, we are limiting visualizations to five randomly chosen peers, potentially including duplicates.
+**Note:** Due to time constraints associated with I/O overhead, we limit visualizations to five randomly chosen peers, potentially including duplicates.
 
 ## Compiling and Running the Simulation
 
@@ -26,6 +26,7 @@ To explore different network behaviors, use the following command-line arguments
 * `Tb`: The average time between block generation (in milliseconds).
 * `Tx`: The average time between transaction generation (in milliseconds).
 * `To`: The total observation time or simulation duration (in milliseconds).
+* To add: `network_delay`: Currently can be manually changed in the code.
 
 ## Example Simulation Commands
 
