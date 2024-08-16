@@ -31,7 +31,7 @@ To explore different network behaviors, use the following command-line arguments
 * `To`: The total observation time or simulation duration (in milliseconds).
 * To add: `network_delay`: Currently can be manually changed in the code.
 
-## Example Simulation Commands
+## Try the below example simulation commands
 
 1. `python3 simulator.py --total_peers 100 --z0_percent 50 --z1_percent 50 --Tx 5000 --Tb 600000 --To 24000000`
 2. `python3 simulator.py --total_peers 100 --z0_percent 50 --z1_percent 50 --Tx 5000 --Tb 25000 --To 1000000`
